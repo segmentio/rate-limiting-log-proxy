@@ -13,8 +13,8 @@ import (
 // messages than burst in a given interval, all further messages are dropped
 // until the end of that interval.
 type RsyslogStyle struct {
-	Interval time.Duration
-	Burst    int
+	interval time.Duration
+	burst    int
 
 	start  time.Time
 	count  int
@@ -25,8 +25,8 @@ type RsyslogStyle struct {
 // NewRsyslogStyle returns a RateLimiter based on rsyslog's rate limiter
 func NewRsyslogStyle(interval time.Duration, burst int) *RsyslogStyle {
 	return &RsyslogStyle{
-		Interval: interval,
-		Burst:    burst,
+		interval: interval,
+		burst:    burst,
 	}
 }
 
@@ -42,7 +42,7 @@ func (r *RsyslogStyle) Limit(logger logger.Logger) bool {
 		r.start = now
 	}
 
-	if now.After(r.start.Add(r.Interval)) {
+	if now.After(r.start.Add(r.interval)) {
 		if r.missed > 0 {
 			// TODO: send datadog stats about dropped messages
 			logger.Log(fmt.Sprintf("dropped %d messages", r.missed))
@@ -53,7 +53,7 @@ func (r *RsyslogStyle) Limit(logger logger.Logger) bool {
 	}
 	r.count++
 
-	if r.count <= r.Burst {
+	if r.count <= r.burst {
 		return false
 	}
 
