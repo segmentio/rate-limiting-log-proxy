@@ -1,13 +1,13 @@
 package logger
 
 import (
-	"log"
 	"time"
 
 	"github.com/coreos/go-systemd/journal"
 	dockerLogger "github.com/docker/docker/daemon/logger"
 	"github.com/docker/docker/daemon/logger/loggerutils"
 	cache "github.com/patrickmn/go-cache"
+	"github.com/segmentio/kit/log"
 )
 
 // JournaldLoggerFactory is a factory for creating journald loggers
@@ -52,7 +52,7 @@ func NewJournaldLogger(info dockerLogger.Info) *JournaldLogger {
 
 	tag, err := loggerutils.ParseLogTag(info, loggerutils.DefaultTemplate)
 	if err != nil {
-		log.Printf("logger: failed to parse logtag: %s", err)
+		log.Errorf("logger: failed to parse logtag: %s", err)
 		tag = info.ContainerID
 	}
 

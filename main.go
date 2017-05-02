@@ -26,7 +26,7 @@ type config struct {
 	SyslogAddress     string        `conf:"s" help:"Address to bind syslog server to (ex. udp://0.0.0.0:514)"`
 }
 
-//
+// DefaultConfig are the defaults for command line flags
 var DefaultConfig = config{
 	DockerHost:        "unix:///var/run/docker.sock",
 	RateLimitInterval: 5 * time.Second,

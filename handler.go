@@ -1,11 +1,12 @@
 package main
 
 import (
-	"log"
+	"strings"
 	"sync"
 	"time"
 
 	dockerLogger "github.com/docker/docker/daemon/logger"
+	"github.com/segmentio/kit/log"
 	"github.com/segmentio/rate-limiting-log-proxy/container"
 	"github.com/segmentio/rate-limiting-log-proxy/logger"
 	"github.com/segmentio/rate-limiting-log-proxy/ratelimiter"
@@ -62,15 +63,19 @@ func (r *RateLimitingHandler) Handle(logParts format.LogParts, messageLength int
 	}
 	tagStr := tag.(string)
 
+	// older versions of docker prepend tag with "docker/"
+	tagStr = strings.TrimPrefix(tagStr, "docker/")
+
 	containerInfo, err := r.containerLookupService.Lookup(tagStr)
 	if err != nil {
 		containerInfo = dockerLogger.Info{}
-		log.Printf("handler: %s", err)
+		log.Errorf("handler: %s", err)
+		return
 	}
 
 	logger, err := r.loggerFactory.New(containerInfo)
 	if err != nil {
-		log.Printf("handler: %s", err)
+		log.Errorf("handler: %s", err)
 		return
 	}
 
