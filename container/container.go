@@ -5,7 +5,6 @@ import (
 	"errors"
 	"time"
 
-	"github.com/docker/docker/api"
 	"github.com/docker/docker/client"
 	dockerLogger "github.com/docker/docker/daemon/logger"
 	cache "github.com/patrickmn/go-cache"
@@ -24,7 +23,7 @@ type DockerLookup struct {
 
 // NewDockerLookup creates a new lookup service given a docker host
 func NewDockerLookup(dockerHost string) (*DockerLookup, error) {
-	client, err := client.NewClient(dockerHost, api.DefaultVersion, nil, nil)
+	client, err := client.NewClient(dockerHost, "1.24", nil, nil)
 	if err != nil {
 		return nil, err
 	}
