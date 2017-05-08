@@ -10,6 +10,10 @@ import (
 	"github.com/segmentio/kit/log"
 )
 
+const (
+	TaskARNLabel = "com.amazonaws.ecs.task-arn"
+)
+
 // JournaldLoggerFactory is a factory for creating journald loggers
 type JournaldLoggerFactory struct {
 	loggers *cache.Cache
@@ -61,6 +65,10 @@ func NewJournaldLogger(info dockerLogger.Info) *JournaldLogger {
 		"CONTAINER_ID_FULL": info.ContainerID,
 		"CONTAINER_NAME":    info.Name(),
 		"CONTAINER_TAG":     tag,
+	}
+
+	if taskARN, ok := info.ContainerLabels[TaskARNLabel]; ok {
+		vars["CONTAINER_TASK"] = taskARN
 	}
 
 	return &JournaldLogger{vars}
