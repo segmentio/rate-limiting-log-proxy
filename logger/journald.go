@@ -1,6 +1,7 @@
 package logger
 
 import (
+	"strings"
 	"time"
 
 	"github.com/coreos/go-systemd/journal"
@@ -69,6 +70,7 @@ func NewJournaldLogger(info dockerLogger.Info) *JournaldLogger {
 
 	if taskARN, ok := info.ContainerLabels[TaskARNLabel]; ok {
 		vars["CONTAINER_TASK"] = taskARN
+		vars["CONTAINER_TASK_UUID"] = arnToUUID(taskARN)
 	}
 
 	return &JournaldLogger{vars}
@@ -77,4 +79,11 @@ func NewJournaldLogger(info dockerLogger.Info) *JournaldLogger {
 // Log sends a log line to journald
 func (j *JournaldLogger) Log(line string) error {
 	return journal.Send(line, journal.PriInfo, j.vars)
+}
+
+func arnToUUID(task string) string {
+	// ECS Task ARN looks like:
+	// arn:aws:ecs:<region>:<aws_account_id>:task/<UUID>
+	ix := strings.IndexByte(task, '/')
+	return task[ix+1:]
 }
