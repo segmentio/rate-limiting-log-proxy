@@ -45,7 +45,7 @@ func (r *RsyslogStyle) Limit(logger logger.Logger) bool {
 	if now.After(r.start.Add(r.interval)) {
 		if r.missed > 0 {
 			// TODO: send datadog stats about dropped messages
-			logger.Log(fmt.Sprintf("dropped %d messages", r.missed))
+			logger.Log(fmt.Sprintf("log-proxy: dropped %d log lines, the service is logging too much", r.missed))
 		}
 		r.count = 0
 		r.missed = 0
@@ -59,7 +59,7 @@ func (r *RsyslogStyle) Limit(logger logger.Logger) bool {
 
 	r.missed++
 	if r.missed == 1 {
-		logger.Log("beginning to drop messages")
+		logger.Log("log-proxy: beginning to drop log lines, the service is logging too much")
 	}
 	return true
 }

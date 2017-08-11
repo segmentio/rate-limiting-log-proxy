@@ -27,6 +27,6 @@ func TestRsyslogStyleRateLimiter(t *testing.T) {
 
 	// Make sure logging of dropped messages works
 	assert.Equal(t, 2, len(logger.Messages))
-	assert.Equal(t, "beginning to drop messages", logger.Messages[0])
-	assert.Equal(t, "dropped 2 messages", logger.Messages[1])
+	assert.Equal(t, "log-proxy: beginning to drop log lines, the service is logging too much", logger.Messages[0])
+	assert.Equal(t, "log-proxy: dropped 2 log lines, the service is logging too much", logger.Messages[1])
 }
