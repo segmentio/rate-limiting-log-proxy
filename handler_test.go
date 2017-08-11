@@ -81,8 +81,8 @@ func TestRateLimitingHandler(t *testing.T) {
 	secondContainerLogger := mockLoggerFactory.Loggers["2"]
 	assert.Equal(t, 4, len(secondContainerLogger.Messages))
 	assert.Equal(t, containerLogs[1]["content"], secondContainerLogger.Messages[0])
-	assert.Equal(t, "beginning to drop messages", secondContainerLogger.Messages[1])
-	assert.Equal(t, "dropped 2 messages", secondContainerLogger.Messages[2])
+	assert.Equal(t, "log-proxy: beginning to drop log lines, the service is logging too much", secondContainerLogger.Messages[1])
+	assert.Equal(t, "log-proxy: dropped 2 log lines, the service is logging too much", secondContainerLogger.Messages[2])
 	assert.Equal(t, flushMessage["content"], secondContainerLogger.Messages[3])
 
 }
