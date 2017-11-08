@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"os/signal"
 	"syscall"
@@ -12,7 +13,6 @@ import (
 	"net/url"
 
 	"github.com/segmentio/conf"
-	"github.com/segmentio/kit/log"
 	"github.com/segmentio/rate-limiting-log-proxy/container"
 	"github.com/segmentio/rate-limiting-log-proxy/logger"
 	syslog "gopkg.in/mcuadros/go-syslog.v2"
@@ -40,7 +40,7 @@ func main() {
 
 	go func() {
 		profilingAddress := fmt.Sprintf("localhost:%s", DefaultConfig.ProfilingPort)
-		log.Infof("Starting profiling server at %s...", profilingAddress)
+		log.Printf("Starting profiling server at %s...", profilingAddress)
 		http.ListenAndServe(profilingAddress, nil)
 	}()
 
@@ -66,7 +66,7 @@ func main() {
 
 	select {
 	case sig := <-sigchan:
-		log.Infof("Received %s, shutting down", sig)
+		log.Printf("Received %s, shutting down", sig)
 		server.Kill()
 		// Unix sockets not cleaned up automatically
 		u, err := url.Parse(DefaultConfig.SyslogAddress)
@@ -83,7 +83,7 @@ func setupListener(server *syslog.Server, address string) error {
 		return err
 	}
 
-	log.Infof("Starting syslog server on %s...", address)
+	log.Printf("Starting syslog server on %s...", address)
 	switch u.Scheme {
 	case "tcp":
 		return server.ListenTCP(u.Host)

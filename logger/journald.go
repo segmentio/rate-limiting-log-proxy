@@ -1,6 +1,7 @@
 package logger
 
 import (
+	"log"
 	"strings"
 	"time"
 
@@ -8,7 +9,6 @@ import (
 	dockerLogger "github.com/docker/docker/daemon/logger"
 	"github.com/docker/docker/daemon/logger/loggerutils"
 	cache "github.com/patrickmn/go-cache"
-	"github.com/segmentio/kit/log"
 )
 
 const (
@@ -57,7 +57,7 @@ func NewJournaldLogger(info dockerLogger.Info) *JournaldLogger {
 
 	tag, err := loggerutils.ParseLogTag(info, loggerutils.DefaultTemplate)
 	if err != nil {
-		log.Errorf("logger: failed to parse logtag: %s", err)
+		log.Printf("logger: failed to parse logtag: %s", err)
 		tag = info.ContainerID
 	}
 

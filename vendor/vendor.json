@@ -285,18 +285,6 @@
 			"revisionTime": "2017-03-03T02:10:09Z"
 		},
 		{
-			"checksumSHA1": "mpmkP5NpHPzvaRarxJpePx8NuJE=",
-			"path": "github.com/segmentio/kit/log",
-			"revision": "b2ceeae5a194174d1ca8caddc26fa91be9ae2621",
-			"revisionTime": "2017-04-17T19:02:52Z"
-		},
-		{
-			"checksumSHA1": "1FswiT4EqxrXHF2+iIKEKo6rCUE=",
-			"path": "github.com/segmentio/kit/schema",
-			"revision": "b2ceeae5a194174d1ca8caddc26fa91be9ae2621",
-			"revisionTime": "2017-04-17T19:02:52Z"
-		},
-		{
 			"checksumSHA1": "qSMIDaB2gJ4pDnhmM+8npMNXyUM=",
 			"path": "github.com/segmentio/objconv",
 			"revision": "1bf61baeb36ab0330f8242b9c73c47e54437d602",
