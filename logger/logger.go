@@ -1,8 +1,9 @@
 package logger
 
 import (
+	"log"
+
 	dockerLogger "github.com/docker/docker/daemon/logger"
-	"github.com/segmentio/kit/log"
 )
 
 // LoggerType specifies which type of downstream logger our handlers should
