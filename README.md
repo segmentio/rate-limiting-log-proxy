@@ -1,3 +1,7 @@
+# ⚠️ Unmaintained ⚠️
+
+This repository is unmaintained, but left as a historical relic for any wishing to adapt it. Godspeed!
+
 # rate-limiting-log-proxy
 
 This proxy is designed to rate limit logs coming from docker in a per-container fashion.  It does this by acting like a syslog server, applying rate limiting, then forwarding logs to a local journald server.
