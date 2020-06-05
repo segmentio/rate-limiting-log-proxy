@@ -1,35 +1,68 @@
-machine:
-  pre:
-    - curl -sSL https://s3.amazonaws.com/circle-downloads/install-circleci-docker.sh | bash -s -- 1.10.0
-  services:
-    - docker
+version: 2
+jobs:
+  setup:
+    working_directory: /go/src/github.com/segmentio/rate-limiting-log-proxy
+    docker:
+      - image: 528451384384.dkr.ecr.us-west-2.amazonaws.com/circleci-golang:1.14.2
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+            - gomod-{{ checksum "vendor/vendor.json" }}
+      - run:
+          name: Fetching Dependencies
+          command: go mod vendor
+      - save_cache:
+          key: gomod-{{ checksum "vendor/vendor.json" }}
+          paths:
+            - "vendor"
+      - persist_to_workspace:
+          root: .
+          paths: [.]
 
-dependencies:
-  pre:
-    - sudo pip install awscli==1.11.76
-    - $(aws ecr get-login --region $AWS_REGION)
-    - docker login -e ${DOCKER_EMAIL} -u ${DOCKER_USER} -p ${DOCKER_PASS}
-  override:
-    - docker pull $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/golang-private:latest
+  test:
+    working_directory: /go/src/github.com/segmentio/rate-limiting-log-proxy
+    docker:
+      - image: 528451384384.dkr.ecr.us-west-2.amazonaws.com/circleci-golang:1.14.2
+    steps:
+      - attach_workspace: { at: . }
+      - run:
+          name: Install necessary packages
+          command: sudo apt-get update && sudo apt-get -y install libsystemd-dev
+      - run:
+          name: Test
+          command: make test
 
-test:
-  override:
-    - >
-      docker run
-      $(env | grep -E '^CIRCLE_|^DOCKER_|^AWS_|^GH_|^NPM_|^PRODUCTION_|^STAGE_|^CIRCLECI=|^CI=' | sed 's/^/--env /g' | tr "\\n" " ")
-      --rm
-      --tty
-      --interactive
-      --name go
-      --net host
-      --volume /var/run/docker.sock:/run/docker.sock
-      --volume ${GOPATH%%:*}/src:/go/src
-      --volume ${PWD}:/go/src/github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}
-      --workdir /go/src/github.com/${CIRCLE_PROJECT_USERNAME}/${CIRCLE_PROJECT_REPONAME}
-      $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/golang-private:latest
+  publish:
+    working_directory: /go/src/github.com/segmentio/ecs-logs-kinesis
+    docker:
+      - image: 528451384384.dkr.ecr.us-west-2.amazonaws.com/circleci-golang:1.14.2
+    steps:
+      - attach_workspace: { at: . }
+      - run:
+          name: Install necessary packages
+          command: sudo apt-get update && sudo apt-get -y install libsystemd-dev
+      - run:
+          name: ECR Login
+          command: $(aws ecr get-login --no-include-email --region ${AWS_REGION})
+      - run:
+          name: Publish Docker image
+          command: |
+            make push_image
 
-deployment:
-  release:
-    tag: /.*/
-    commands:
-      - 'true'
+workflows:
+  version: 2
+  run:
+    jobs:
+      - setup:
+          filters:
+            tags: { only: /.*/ }
+      - test:
+          requires: [setup]
+          context: org-global
+      - publish:
+          requires: [setup]
+          context: org-global
+          filters:
+            tags: { only: /^v.*/ }
+            branches: { ignore: /.*/ }
