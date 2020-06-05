@@ -366,7 +366,7 @@
 			"revisionTime": "2017-03-13T17:17:33Z"
 		},
 		{
-			"checksumSHA1": "ENl6I8+3AaBanbn9CVExMjDTHPc=",
+			"checksumSHA1": "dUfdXzRJupI9VpqNR2LlppeZvLc=",
 			"origin": "github.com/docker/docker/vendor/golang.org/x/sys/unix",
 			"path": "golang.org/x/sys/unix",
 			"revision": "47615d9871510cdad0f894f8bc9e82c1a9873fa5",
