@@ -1,0 +1,6 @@
+.git
+Dockerfile
+docker-compose
+.circleci
+.buildkite
+.github
